@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload - Ye-box</title>
+    <link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="golden-disk" alt="Golden Disk"></div>
+            <div class="logo">
+                <h1>Ye-box</h1>
+            </div>
+            <button class="back-btn" onclick="window.location.href='/'">Back to Music</button>
+        </header>
+
+        <main class="upload-container">
+            <div class="upload-card">
+                <h2>Upload Album/Playlist</h2>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="albumName">Album/Playlist Name:</label>
+                        <input type="text" id="albumName" name="albumName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coverImage">Select Cover Image:</label>
+                        <input type="file" id="coverImage" name="coverImage" accept=".png,.jpg,.jpeg" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="musicFiles">Select Music Files:</label>
+                        <input type="file" id="musicFiles" name="musicFiles" accept=".mp3" multiple required>
+                    </div>
+                    <button type="submit">Upload Album</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Handle form submission
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const albumName = document.getElementById('albumName').value;
+            const coverImage = document.getElementById('coverImage').files[0];
+            const musicFiles = document.getElementById('musicFiles').files;
+            
+            formData.append('albumName', albumName);
+            formData.append('coverImage', coverImage);
+            
+            for (let i = 0; i < musicFiles.length; i++) {
+                formData.append('musicFiles', musicFiles[i]);
+            }
+            
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('Album uploaded successfully!');
+                    window.location.href = '/';
+                } else {
+                    alert('Error uploading album');
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                alert('Error uploading album');
+            }
+        });
+    </script>
+</body>
+</html>
